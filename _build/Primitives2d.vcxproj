@@ -171,6 +171,7 @@
     <ClInclude Include="..\game\src\screens.h" />
     <ClInclude Include="ColorControlButton.h" />
     <ClInclude Include="Globals.h" />
+    <ClInclude Include="Info.h" />
     <ClInclude Include="Line.h" />
   </ItemGroup>
   <ItemGroup>

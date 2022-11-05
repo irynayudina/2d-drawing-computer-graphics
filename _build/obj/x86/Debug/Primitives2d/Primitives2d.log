@@ -1,2 +1,4 @@
-﻿  Line.cpp
+﻿  Editor.c++
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(37,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(38,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
   Primitives2d.vcxproj -> D:\4year1sem\computer_graphics\Primitives2d\_bin\Debug\Primitives2d.exe

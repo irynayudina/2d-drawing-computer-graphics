@@ -17,6 +17,7 @@
     </ClInclude>
     <ClInclude Include="ColorControlButton.h" />
     <ClInclude Include="Line.h" />
+    <ClInclude Include="Info.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.c++">

@@ -2,18 +2,31 @@
 #include "raylib.h"
 #include <stdlib.h>
 #include <string> 
+#include "Info.h"
 //#include "Globals.h"
 class Line {
 public:
-	int id;
+	bool end = false;
+	bool line = false;
+	bool start = false;
+	bool selected = false;
+	int selectionX = 0;
+	int selectionY = 0;
+	int selectionWidth = 0;
+	int selectionHeight = 0;
+	char infol[50] = "nothing is selected";
+	int id;//
+	char name[50] = "line";
 	Color color;
 	int x0;
 	int y0;
 	int x1;
 	int y1;
 	int boundaryPixelsOuter;
-	Line(int x0, int y0, int x1, int y1, Color color, int id, int boundaryPixelsOuter);
+	Line(int x0, int y0, int x1, int y1, Color color, int id, int boundaryPixelsOuter, char name[]);
 	~Line();
-	void draw();
-	//void run();
+	void draw(int x0, int y0, int x1, int y1);
+	void detectSelectionClickLine(int x0, int y0, int x1, int y1, int boundaryPixelsOuter);
+	void unselect(bool s);
+	void run();
 };
