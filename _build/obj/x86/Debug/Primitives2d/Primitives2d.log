@@ -1,4 +1,6 @@
 ﻿  Editor.c++
-D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(37,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
 D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(38,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(39,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(181,21): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(125,15): warning C4101: clothestline: неиспользованная локальная переменная
   Primitives2d.vcxproj -> D:\4year1sem\computer_graphics\Primitives2d\_bin\Debug\Primitives2d.exe

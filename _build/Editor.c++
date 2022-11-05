@@ -20,6 +20,7 @@
 #include <iostream>
 #include "ColorControlButton.h"
 #include "Line.h"
+#include <algorithm>
 void drawLine(int x0, int y0, int x1, int y1) {
     int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
     int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -82,11 +83,13 @@ int main(void)
     // pointer decoration 
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
+    // custom lines
     Line* classline = new Line(500, 500, 700, 800, RED, 1, 20, "redline");
     Line* lines[100];
     lines[0] = classline;
     lines[1] = new Line(600, 600, 800, 900, BLUE, 2, 20, "blueline");
-    amountOfLines = 2;
+    lines[2] = new Line(100, 100, 300, 300, GREEN, 3, 20, "greenline");
+    amountOfLines = 3;
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
     // Main game loop
@@ -116,12 +119,30 @@ int main(void)
         std::string t;
         t = "selected count: ";
         int selectedCount = 0;
+        int deltastolineends[200];//because 100 lines
+        int min = 20000;
+        int minIndex = 0;
+        Line* clothestline;
         for (int i = 0; i < amountOfLines; i++) {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) { //  || IsMouseButtonDown(MOUSE_LEFT_BUTTON)
                 lines[i]->detectSelectionClickLine(lines[i]->x0, lines[i]->y0, lines[i]->x1, lines[i]->y1, lines[i]->boundaryPixelsOuter);
                 // clothest line
+                /*
+                int x;
+                int y;
+                (x0 y0) (x1 y1) // end and start of line
+                (x - x0) / (x1 - x0) = (y - y0) / (y1 - y0)
+                (x - x0) * (y1 - y0) = (y - y0) * (x1 - x0)
+                x * (y1 - y0) - x0 * (y1 - y0)  = y * (x1 - x0) - y0 * (x1 - x0)
+                // equation of line
+                x * (y1 - y0) - y * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0) = 0
+                // distance to line from mouse
+                int xM = GetMouseX();
+                int yM = GetMouseY();
+                A = (y1 - y0)  B = (x1 - x0)*(-1)
 
-
+                deltastolineends[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
+                */
             }
             if (lines[i]->selected) {
                 ++selectedCount;
@@ -132,12 +153,13 @@ int main(void)
                     strcpy(info, lines[i]->infol);
                 }
             }
-            if (selectedCount <= 1) {
+            lines[i]->run();
+            /*if (selectedCount <= 1) {
                 lines[i]->run();
             }
             else {
                 lines[i]->unselect(true);
-            }
+            }*/
            /* else {
                 t = t + std::to_string(selectedCount) + " " + lines[i]->name + "\n";
                 strcpy(info, "multiple objects are selected");
@@ -146,7 +168,33 @@ int main(void)
                 lines[i]->color = selectionColor;
             }
         }
+        for (int i = 0; i < amountOfLines; i++) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                //A = (y1 - y0)  B = (x1 - x0)*(-1)
+                int x0 = lines[i]->x0;
+                int y0 = lines[i]->y0;
+                int x1 = lines[i]->x1;
+                int y1 = lines[i]->y1;
+                int xM = GetMouseX();
+                int yM = GetMouseY();
+                deltastolineends[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))
+                    / sqrt(pow(y1 - y0,2) + pow((x1 - x0) * (-1),2));
+            }
+        }
+        for (int i = 0; i < amountOfLines; i++) { //*2
+            if (deltastolineends[i] < min) {
+                min = deltastolineends[i];
+                minIndex = i;
+            }
+        }
+        t = std::to_string(deltastolineends[minIndex]) + " " + lines[minIndex]->name;
         char const* displayCoordinates = t.c_str();
+        for (int i = 0; i < amountOfLines; i++) { //*2
+            if (i == minIndex) {
+                continue;
+            }
+            lines[i]->unselect(true);
+        }
                 // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
