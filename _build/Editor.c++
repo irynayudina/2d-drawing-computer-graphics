@@ -22,6 +22,7 @@
 #include "ColorControlButton.h"
 #include "Line.h"
 #include <algorithm>
+#include <vector>
 void drawLine(int x0, int y0, int x1, int y1) {
     int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
     int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -48,6 +49,19 @@ void changeColor(ColorControlButton colorPressed) {
             colorPressed.rectangle->width = controlsSize;
             colorPressed.rectangle->height = controlsSize;
             colorize = false;
+        }
+    }
+}
+void drawFigure(Rectangle line, int *amountOfLines, Line* lines[]) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        float xM = GetMouseX();
+        float yM = GetMouseY();
+        if (CheckCollisionPointRec({ xM, yM }, line)) {
+            selectionColor = BLACK;
+            std::cout << line.x << std::endl;
+            *amountOfLines +=1;
+            lines[*amountOfLines] = new Line(300, 300, 400, 400, *amountOfLines, "line", RED, 20);
+            std::cout << lines[*amountOfLines]->id << std::endl;
         }
     }
 }
@@ -89,12 +103,14 @@ int main(void)
     // custom lines
     Line* classline = new Line(500, 500, 700, 800, 1, "redline", RED, 20);
     Line* lines[100];
+    std::vector<Line> objects;
     lines[0] = classline;
     lines[1] = new Line(600, 600, 800, 900, 2, "blueline", BLUE, 20);
     lines[2] = new Line(100, 100, 300, 300, 3, "greenline", GREEN, 20);
     amountOfLines = 3;
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-
+    char* test[100] = {0};
+    int testlength = 0;
     // Main game loop
     while (!WindowShouldClose())
     {
@@ -119,8 +135,26 @@ int main(void)
         }if (!colorize) {
             changeColor(*purple);
         }
+        //drawFigure(line, &amountOfLines, lines);
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            float xM = GetMouseX();
+            float yM = GetMouseY();
+            if (CheckCollisionPointRec({ xM, yM }, line)) {
+                selectionColor = BLACK;
+                std::cout << line.x << std::endl;
+               /* amountOfLines += 1;
+                lines[amountOfLines] = new Line(300, 300, 400, 400, amountOfLines, "line", RED, 20);
+                std::cout << lines[amountOfLines]->id << std::endl;*/
+                ++testlength;
+                objects.push_back(Line(300, 300, 400, 400, amountOfLines, "line", RED, 20));
+
+            }
+        }
         std::string t;
         t = "";
+        if (testlength > 0) {
+            t = t + std::to_string(testlength) + objects.at(0).name;
+        }
         int selectedCount = 0;
         int deltasOfLinesToMouse[200];//because 100 lines
         int min = 20000;
