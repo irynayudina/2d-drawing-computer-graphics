@@ -17,6 +17,7 @@
 #include <string.h>
 #include <string> 
 #include "Globals.h"
+#include "ScreenSizes.h"
 #include <iostream>
 #include "ColorControlButton.h"
 #include "Line.h"
@@ -57,10 +58,7 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1900;
-    const int screenHeight = 950;
-    const int screenBorder = 10;
-    const int colorPalletteX = 1200;
+    
     InitWindow(screenWidth, screenHeight, "2D rpimitives editor");
     SetWindowPosition(10, 40);
     // color controls buttons 
@@ -74,21 +72,26 @@ int main(void)
     ColorControlButton* gray = new ColorControlButton(&grayR, GRAY);
     Rectangle greenR = Rectangle{ colorPalletteX, screenBorder + controlsSize * 2, controlsSize, controlsSize };
     ColorControlButton* green = new ColorControlButton(&greenR, GREEN);
-    Rectangle orangeR = Rectangle{ colorPalletteX + controlsSize * 2, screenBorder + controlsSize * 2, controlsSize, controlsSize };
+    Rectangle orangeR = Rectangle{ colorPalletteX + controlsSize * 2, screenBorder + controlsSize * 2, controlsSize, controlsSize};
     ColorControlButton* orange = new ColorControlButton(&orangeR, ORANGE);
     Rectangle pinkR = Rectangle{ colorPalletteX + controlsSize * 4, screenBorder + controlsSize * 2, controlsSize, controlsSize };
     ColorControlButton* pink = new ColorControlButton(&pinkR, PINK);
     Rectangle purpleR = Rectangle{ colorPalletteX + controlsSize * 6, screenBorder + controlsSize * 2, controlsSize, controlsSize };
     ColorControlButton* purple = new ColorControlButton(&purpleR, PURPLE);
+    // figures buttons
+    Rectangle line = Rectangle{ colorPalletteX, screenBorder + controlsSize * 4, controlsSize, controlsSize };
+    Rectangle triangle = Rectangle{ colorPalletteX + controlsSize * 2, screenBorder + controlsSize * 4, controlsSize, controlsSize };
+    Rectangle rectangle = Rectangle{ colorPalletteX + controlsSize * 4, screenBorder + controlsSize * 4, controlsSize, controlsSize };
+    Rectangle circle = Rectangle{ colorPalletteX + controlsSize * 6, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     // pointer decoration 
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
     // custom lines
-    Line* classline = new Line(500, 500, 700, 800, RED, 1, 20, "redline");
+    Line* classline = new Line(500, 500, 700, 800, 1, "redline", RED, 20);
     Line* lines[100];
     lines[0] = classline;
-    lines[1] = new Line(600, 600, 800, 900, BLUE, 2, 20, "blueline");
-    lines[2] = new Line(100, 100, 300, 300, GREEN, 3, 20, "greenline");
+    lines[1] = new Line(600, 600, 800, 900, 2, "blueline", BLUE, 20);
+    lines[2] = new Line(100, 100, 300, 300, 3, "greenline", GREEN, 20);
     amountOfLines = 3;
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
@@ -117,9 +120,9 @@ int main(void)
             changeColor(*purple);
         }
         std::string t;
-        t = "selected count: ";
+        t = "";
         int selectedCount = 0;
-        int deltastolineends[200];//because 100 lines
+        int deltasOfLinesToMouse[200];//because 100 lines
         int min = 20000;
         int minIndex = 0;
         Line* clothestline;
@@ -140,30 +143,20 @@ int main(void)
                 int xM = GetMouseX();
                 int yM = GetMouseY();
                 A = (y1 - y0)  B = (x1 - x0)*(-1)
-
-                deltastolineends[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
+                deltasOfLinesToMouse[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
                 */
             }
             if (lines[i]->selected) {
                 ++selectedCount;
+                figuresSelected = true;
                 if (selectedCount == 1) {
                     t = "x0: " + std::to_string(lines[i]->x0) + ", y0: " + std::to_string(lines[i]->y0)
                         + "\nx1: " +
-                        std::to_string(lines[i]->x1) + ", y1: " + std::to_string(lines[i]->y1);
+                        std::to_string(lines[i]->x1) + ", y1: " + std::to_string(lines[i]->y1) + "\n\n";
                     strcpy(info, lines[i]->infol);
                 }
             }
             lines[i]->run();
-            /*if (selectedCount <= 1) {
-                lines[i]->run();
-            }
-            else {
-                lines[i]->unselect(true);
-            }*/
-           /* else {
-                t = t + std::to_string(selectedCount) + " " + lines[i]->name + "\n";
-                strcpy(info, "multiple objects are selected");
-            }*/
             if (lines[i]->selected && colorize) {
                 lines[i]->color = selectionColor;
             }
@@ -177,19 +170,19 @@ int main(void)
                 int y1 = lines[i]->y1;
                 int xM = GetMouseX();
                 int yM = GetMouseY();
-                deltastolineends[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))
+                deltasOfLinesToMouse[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))
                     / sqrt(pow(y1 - y0,2) + pow((x1 - x0) * (-1),2));
             }
         }
-        for (int i = 0; i < amountOfLines; i++) { //*2
-            if (deltastolineends[i] < min) {
-                min = deltastolineends[i];
+        for (int i = 0; i < amountOfLines; i++) {
+            if (deltasOfLinesToMouse[i] < min) {
+                min = deltasOfLinesToMouse[i];
                 minIndex = i;
             }
         }
-        t = std::to_string(deltastolineends[minIndex]) + " " + lines[minIndex]->name;
+        if(figuresSelected) t = t + std::to_string(deltasOfLinesToMouse[minIndex]) + " " + lines[minIndex]->name;
         char const* displayCoordinates = t.c_str();
-        for (int i = 0; i < amountOfLines; i++) { //*2
+        for (int i = 0; i < amountOfLines; i++) {
             if (i == minIndex) {
                 continue;
             }
@@ -212,6 +205,16 @@ int main(void)
         DrawRectangleRec(*orange->rectangle, ORANGE);
         DrawRectangleRec(*pink->rectangle, PINK);
         DrawRectangleRec(*purple->rectangle, PURPLE);
+        // figures
+        DrawRectangleLines(line.x, line.y, line.width, line.height, BLANK);
+        DrawLine(line.x, line.y, line.x + line.width, line.y+line.height, BLACK);
+        DrawRectangleLines(triangle.x, triangle.y, triangle.width, triangle.height, BLANK);
+        DrawTriangleLines({ triangle.x, triangle.y + triangle.height }, { triangle.x + triangle.width/2, triangle.y },
+            { triangle.x + triangle.width, triangle.y + triangle.height }, BLACK);
+        DrawRectangleLines(rectangle.x, rectangle.y, rectangle.width, rectangle.height, BLACK);
+        DrawRectangleLines(circle.x, circle.y, circle.width, circle.height, BLANK);
+        DrawCircleLines(circle.x + circle.width / 2, circle.y + circle.width / 2, circle.width / 2, BLACK);
+
         // pointer
         DrawLine(screenBorder, screenUIHeight, (screenWidth - screenBorder), screenUIHeight, DARKGRAY);
         DrawCircleV(ballPosition, 4, ballColor);
@@ -222,7 +225,6 @@ int main(void)
                 DrawRectangleLines(lines[i]->selectionX, lines[i]->selectionY, lines[i]->selectionWidth, lines[i]->selectionHeight, GREEN);
             }
         }
-        //DrawText("Irina loves her husband Anurag meowwww", 400, 400, 30, RED);
         EndDrawing();
     }
     CloseWindow();        // Close window and OpenGL context    

@@ -1,10 +1,11 @@
 #pragma once
-const int screenUIHeight = 150;
-const int controlsSize = 20;
+
 bool colorize = false;
 Color selectionColor = GREEN;
 int amountOfLines = 0;
 char info[50] = "nothing is selected";
+bool figuresSelected = false;
+
 
 //bool end = false;
 //bool line = false;

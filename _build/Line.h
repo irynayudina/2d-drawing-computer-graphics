@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include <stdlib.h>
 #include <string> 
-#include "Info.h"
+#include "ScreenSizes.h"
 //#include "Globals.h"
 class Line {
 public:
@@ -23,10 +23,11 @@ public:
 	int x1;
 	int y1;
 	int boundaryPixelsOuter;
-	Line(int x0, int y0, int x1, int y1, Color color, int id, int boundaryPixelsOuter, char name[]);
+	Line(int x0, int y0, int x1, int y1, int id, char name[], Color color, int boundaryPixelsOuter);
 	~Line();
 	void draw(int x0, int y0, int x1, int y1);
 	void detectSelectionClickLine(int x0, int y0, int x1, int y1, int boundaryPixelsOuter);
 	void unselect(bool s);
+	bool onTheScreen();
 	void run();
 };

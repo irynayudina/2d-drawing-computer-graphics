@@ -1,6 +1,28 @@
 ﻿  Editor.c++
-D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(38,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
 D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(39,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
-D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(181,21): warning C4244: =: преобразование "double" в "int", возможна потеря данных
-D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(125,15): warning C4101: clothestline: неиспользованная локальная переменная
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(40,18): warning C4244: инициализация: преобразование "int" в "float", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(174,21): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(209,60): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(209,48): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(209,40): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(209,32): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(210,61): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(210,41): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(210,30): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(210,22): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(211,76): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(211,60): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(211,48): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(211,36): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(214,80): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(214,63): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(214,50): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(214,37): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(215,68): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(215,54): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(215,44): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(215,34): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(216,63): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(216,34): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+D:\4year1sem\computer_graphics\Primitives2d\_build\Editor.c++(128,15): warning C4101: clothestline: неиспользованная локальная переменная
   Primitives2d.vcxproj -> D:\4year1sem\computer_graphics\Primitives2d\_bin\Debug\Primitives2d.exe
