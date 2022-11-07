@@ -169,13 +169,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\game\src\screens.h" />
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="ColorControlButton.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Line.h" />
-    <ClInclude Include="LineButton.h" />
     <ClInclude Include="ScreenSizes.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="ColorControlButton.cpp" />
     <ClCompile Include="Editor.c++" />
     <ClCompile Include="Line.cpp" />

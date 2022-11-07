@@ -18,7 +18,7 @@
     <ClInclude Include="ColorControlButton.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="ScreenSizes.h" />
-    <ClInclude Include="LineButton.h" />
+    <ClInclude Include="Circle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.c++">
@@ -26,5 +26,6 @@
     </ClCompile>
     <ClCompile Include="ColorControlButton.cpp" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Circle.cpp" />
   </ItemGroup>
 </Project>

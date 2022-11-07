@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string> 
 #include "ScreenSizes.h"
-//#include "Globals.h"
 class Line {
 public:
 	bool end = false;
