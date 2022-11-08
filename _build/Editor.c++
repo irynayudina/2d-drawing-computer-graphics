@@ -11,31 +11,24 @@
 #include <algorithm>
 #include <vector>
 #include"Circle.h"
-//void drawLine(int x0, int y0, int x1, int y1) {
-//    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-//    int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-//    int err = dx + dy, e2; /* error value e_xy */
-//    for (;;) {  /* loop */
-//        DrawPixel(x0, y0, selectionColor);
-//        if (x0 == x1 && y0 == y1) break;
-//        e2 = 2 * err;
-//        if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */    
-//        if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */   
-//    }
-//}
-void drawCircle(int xm, int ym, int r)
-{
-    int x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */
-    do {
-        DrawPixel(xm - x, ym + y, BLACK); /*   I. Quadrant */
-        DrawPixel(xm - y, ym - x, BLACK); /*  II. Quadrant */
-        DrawPixel(xm + x, ym - y, BLACK); /* III. Quadrant */
-        DrawPixel(xm + y, ym + x, BLACK); /*  IV. Quadrant */
-        r = err;
-        if (r > x) err += ++x * 2 + 1; /* e_xy+e_x > 0 */
-        if (r <= y) err += ++y * 2 + 1; /* e_xy+e_y < 0 */
-    } while (x < 0);
-}
+#include "Triangle.h"
+#include "Square.h"
+// clothest line
+                /*
+                int x;
+                int y;
+                (x0 y0) (x1 y1) // end and start of line
+                (x - x0) / (x1 - x0) = (y - y0) / (y1 - y0)
+                (x - x0) * (y1 - y0) = (y - y0) * (x1 - x0)
+                x * (y1 - y0) - x0 * (y1 - y0)  = y * (x1 - x0) - y0 * (x1 - x0)
+                // equation of line
+                x * (y1 - y0) - y * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0) = 0
+                // distance to line from mouse
+                int xM = GetMouseX();
+                int yM = GetMouseY();
+                A = (y1 - y0)  B = (x1 - x0)*(-1)
+                deltasOfLinesToMouse[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
+                */
 void changeColor(ColorControlButton colorPressed) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         float xM = GetMouseX();
@@ -53,16 +46,40 @@ void changeColor(ColorControlButton colorPressed) {
         }
     }
 }
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
+void fillWithColor(Rectangle* fillButton, Rectangle* clearButton) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        float xM = GetMouseX();
+        float yM = GetMouseY();
+        if (CheckCollisionPointRec({ xM, yM }, *clearButton)) {
+            fill = true;
+            fillColor = BLANK; 
+            clearButton->width = controlsSize + 10;
+            clearButton->height = controlsSize + 10;
+            fillButton->width = controlsSize;
+            fillButton->height = controlsSize;
+        }
+        else if (CheckCollisionPointRec({ xM, yM }, *fillButton)) {
+            fill = true;
+            fillColor = selectionColor;
+            fillButton->width = controlsSize + 10;
+            fillButton->height = controlsSize + 10;
+            clearButton->width = controlsSize;
+            clearButton->height = controlsSize;
+        }
+        else {
+            fill = false;
+            fillButton->width = controlsSize;
+            fillButton->height = controlsSize;
+            clearButton->width = controlsSize;
+            clearButton->height = controlsSize;
+        } 
+    }
+}
 int main(void)
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    
     InitWindow(screenWidth, screenHeight, "2D rpimitives editor");
     SetWindowPosition(10, 40);
+
     // color controls buttons 
     Rectangle redR = Rectangle{ colorPalletteX, screenBorder, controlsSize, controlsSize };
     ColorControlButton *red = new ColorControlButton(&redR, RED);
@@ -80,28 +97,42 @@ int main(void)
     ColorControlButton* pink = new ColorControlButton(&pinkR, PINK);
     Rectangle purpleR = Rectangle{ colorPalletteX + controlsSize * 6, screenBorder + controlsSize * 2, controlsSize, controlsSize };
     ColorControlButton* purple = new ColorControlButton(&purpleR, PURPLE);
+    Rectangle fillButton = Rectangle{ colorPalletteX + controlsSize * 8, screenBorder, controlsSize, controlsSize };
+    Rectangle clearButton = Rectangle{ colorPalletteX + controlsSize * 8, screenBorder + controlsSize * 2, controlsSize, controlsSize };
+    
     // figures buttons
     Rectangle line = Rectangle{ colorPalletteX, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     Rectangle triangle = Rectangle{ colorPalletteX + controlsSize * 2, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     Rectangle rectangle = Rectangle{ colorPalletteX + controlsSize * 4, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     Rectangle circle = Rectangle{ colorPalletteX + controlsSize * 6, screenBorder + controlsSize * 4, controlsSize, controlsSize };
+    
     // pointer decoration 
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
-    // custom lines
+    
+    // custom figures
     std::vector<Line> lines;
-    Line* classline = new Line(500, 500, 700, 800, 1, "redline", RED, 20);
-    lines.push_back(*classline);
-    lines.push_back(Line(600, 600, 800, 900, 2, "blueline", BLUE, 20));
-    lines.push_back(Line(100, 100, 300, 300, 3, "greenline", GREEN, 20));
-    // custom circles
     std::vector<Circle> circles;
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    std::vector<Triangle> triangles;
+    std::vector<Square> squares;
+
+    SetTargetFPS(60);   
     // Main game loop
     while (!WindowShouldClose())
     {
-        // Update
-        //----------------------------------------------------------------------------------
+        std::string t;
+        t = "";
+        int selectedCount = 0;
+        int deltasOfLinesToMouse[200];//because 100 lines
+        int min = 20000;
+        int minIndex = 0;
+        Line* clothestline;
+        figuresSelected = false;
+        bool circleSelected = false;
+        bool lineSelected = false;
+        bool triangleSelected = false;
+        bool squareSelected = false;
+        strcpy(info, "nothing is selected");
         ballPosition = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ballColor = MAROON;
         if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) ballColor = DARKBLUE;
@@ -121,6 +152,7 @@ int main(void)
         }if (!colorize) {
             changeColor(*purple);
         }
+        fillWithColor(&fillButton, &clearButton);
         // drawFigures
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             float xM = GetMouseX();
@@ -129,58 +161,132 @@ int main(void)
                 lines.push_back(Line(300, 300, 400, 400, rand(), "line", RED, 20));
             }
             if (CheckCollisionPointRec({ xM, yM }, circle)) {
-                circles.push_back(Circle(400, 400, 30, rand(), "circle"));
+                circles.push_back(Circle(400, 400, 50, rand(), "circle"));
+            }
+            if (CheckCollisionPointRec({ xM, yM }, triangle)) {
+                triangles.push_back(Triangle(400, 450, 500, 400, 350, 400, BLACK, rand()));
+            }
+            if (CheckCollisionPointRec({ xM, yM }, rectangle)) {
+                squares.push_back(Square(400, 400, 500, 500, 400, 500, 500, 400, BLACK, rand()));
             }
         }
-        std::string t;
-        t = "";
-        int selectedCount = 0;
-        int deltasOfLinesToMouse[200];//because 100 lines
-        int min = 20000;
-        int minIndex = 0;
-        Line* clothestline;
-        figuresSelected = false;
-        strcpy(info, "nothing is selected");
+        // select and move triangles
+        for (int i = 0; i < triangles.size(); i++) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                triangles.at(i).detectSelectionClick();
+            }
+            if (triangles.at(i).selected && colorize) {
+                triangles.at(i).color = selectionColor;
+            }
+            if (triangles.at(i).selected && fill) {
+                triangles.at(i).filled = true;
+                triangles.at(i).fillColor = fillColor;
+            }
+            if (triangles.at(i).selected) {
+                ++selectedCount;
+                figuresSelected = true;
+                triangleSelected = true;
+                if (selectedCount == 1) {
+                    t = "x0: " + std::to_string(triangles.at(i).borderX) + ", y0: " + std::to_string(triangles.at(i).borderY);
+                    strcpy(info, triangles.at(i).infol);
+                }
+                else {
+                    strcpy(info, "multiple squares");
+                }
+            }
+            if (selectedCount <= 1) {
+                if (!lineSelected && !circleSelected && !squareSelected) {
+                    triangles.at(i).run();
+                }
+                else {
+                    triangles.at(i).unselect(true);
+                }
+            }
+            else {
+                triangles.at(i).unselect(true);
+            }
+        }
+        //select and move squares
+        for (int i = 0; i < squares.size(); i++) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                squares.at(i).detectSelectionClick();
+            }
+            if (squares.at(i).selected && colorize) {
+                squares.at(i).color = selectionColor;
+            }
+            if (squares.at(i).selected && fill) {
+                squares.at(i).filled = true;
+                squares.at(i).fillColor = fillColor;
+            }
+            if (squares.at(i).selected) {
+                ++selectedCount;
+                figuresSelected = true;
+                squareSelected = true;
+                if (selectedCount == 1) {
+                    t = "x0: " + std::to_string(squares.at(i).x0) + ", y0: " + std::to_string(squares.at(i).y0);
+                    strcpy(info, squares.at(i).infol);
+                }
+                else {
+                    strcpy(info, "multiple squares");
+                }
+            }
+            if (selectedCount <= 1) {
+                if (!lineSelected && !circleSelected && !triangleSelected) {
+                    squares.at(i).run();
+                }
+                else {
+                    squares.at(i).unselect(true);
+                }
+            }
+            else {
+                squares.at(i).unselect(true);
+            }
+        }
+        // select and move circles
         for (int i = 0; i < circles.size(); i++) {
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) { //  || IsMouseButtonDown(MOUSE_LEFT_BUTTON)
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 circles.at(i).detectSelectionClick();
             }
             if (circles.at(i).selected && colorize) {
                 circles.at(i).color = selectionColor;
             }
-            circles.at(i).run();
+            if (circles.at(i).selected && fill) {
+                circles.at(i).filled = true;
+                circles.at(i).fillColor = fillColor;
+            }
             if (circles.at(i).selected) {
                 ++selectedCount;
                 figuresSelected = true;
+                circleSelected = true;
                 if (selectedCount == 1) {
                     t = "xm: " + std::to_string(circles.at(i).xm) + ", ym: " + std::to_string(circles.at(i).ym);
-                    strcpy(info, lines.at(i).infol);
+                    strcpy(info, circles.at(i).infol);
+                }
+                else {
+                    strcpy(info, "multiple circles");
                 }
             }
+            if (selectedCount <= 1) {
+                if (!lineSelected && !triangleSelected && !squareSelected) {
+                    circles.at(i).run();
+                }
+                else {
+                    circles.at(i).unselect(true);
+                }
+            }
+            else {
+                circles.at(i).unselect(true);
+            }
         }
+        // select and move lines
         for (int i = 0; i < lines.size(); i++) {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) { //  || IsMouseButtonDown(MOUSE_LEFT_BUTTON)
                 lines.at(i).detectSelectionClickLine(lines.at(i).x0, lines.at(i).y0, lines.at(i).x1, lines.at(i).y1, lines.at(i).boundaryPixelsOuter);
-               // clothest line
-                /*
-                int x;
-                int y;
-                (x0 y0) (x1 y1) // end and start of line
-                (x - x0) / (x1 - x0) = (y - y0) / (y1 - y0)
-                (x - x0) * (y1 - y0) = (y - y0) * (x1 - x0)
-                x * (y1 - y0) - x0 * (y1 - y0)  = y * (x1 - x0) - y0 * (x1 - x0)
-                // equation of line
-                x * (y1 - y0) - y * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0) = 0
-                // distance to line from mouse
-                int xM = GetMouseX();
-                int yM = GetMouseY();
-                A = (y1 - y0)  B = (x1 - x0)*(-1)
-                deltasOfLinesToMouse[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
-                */
             }
             if (lines.at(i).selected) {
                 ++selectedCount;
                 figuresSelected = true;
+                lineSelected = true;
                 if (selectedCount == 1) {
                     t = "x0: " + std::to_string(lines.at(i).x0) + ", y0: " + std::to_string(lines.at(i).y0)
                         + "\nx1: " +
@@ -188,14 +294,19 @@ int main(void)
                     strcpy(info, lines.at(i).infol);
                 }
             }
-            lines.at(i).run();
+            if (!circleSelected && !squareSelected && !triangleSelected) {
+                lines.at(i).run();
+            }
+            else {
+                lines.at(i).unselect(true);
+            }
             if (lines.at(i).selected && colorize) {
                 lines.at(i).color = selectionColor;
             }
         }
+        // detect the closest line to click and unselect other
         for (int i = 0; i < lines.size(); i++) {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                //A = (y1 - y0)  B = (x1 - x0)*(-1)
                 int x0 = lines.at(i).x0;
                 int y0 = lines.at(i).y0;
                 int x1 = lines.at(i).x1;
@@ -212,7 +323,7 @@ int main(void)
                 minIndex = i;
             }
         }
-        if(figuresSelected) t = t + std::to_string(deltasOfLinesToMouse[minIndex]) + " " + lines.at(minIndex).name;
+        if(lineSelected) t = t + std::to_string(deltasOfLinesToMouse[minIndex]) + " " + lines.at(minIndex).name;
         char const* displayCoordinates = t.c_str();
         for (int i = 0; i < lines.size(); i++) {
             if (i == minIndex) {
@@ -220,14 +331,14 @@ int main(void)
             }
             lines.at(i).unselect(true);
         }
-                // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
+
         // UI elements - library functions
         ClearBackground(RAYWHITE);
         DrawText("draw item from menue to canvas with a click of a mouse, \nmove and resize it with pressed mouse, \ncolor it by selecting it with a click of a mouse and clicking on color from menue, \nset rotation and scale to selected item(s) from menue, \nto select multiple hold Shift and click with a mouse on each element", screenBorder, screenBorder, controlsSize, DARKGRAY);
         DrawText(displayCoordinates, 850, screenBorder, controlsSize, RED);
         DrawText(info, 850, screenBorder + controlsSize*3, controlsSize, RED);
+        
         // colors
         DrawRectangleRec(*red->rectangle, RED);
         DrawRectangleRec(*black->rectangle, BLACK);
@@ -237,6 +348,14 @@ int main(void)
         DrawRectangleRec(*orange->rectangle, ORANGE);
         DrawRectangleRec(*pink->rectangle, PINK);
         DrawRectangleRec(*purple->rectangle, PURPLE);
+        Color color1 = GetColor(0xe0119a);
+        Color color2 = GetColor(0xffeb00);
+        DrawRectangleGradientH(fillButton.x, fillButton.y, fillButton.width, fillButton.height, PINK, YELLOW);
+        DrawText("F", fillButton.x+3, fillButton.y+1, fillButton.width, BLACK);
+        DrawRectangleLines(clearButton.x, clearButton.y, clearButton.width, clearButton.height, BLACK);
+        DrawText("C", clearButton.x + 3, clearButton.y + 1, clearButton.width, BLACK);
+
+        
         // figures
         DrawRectangleLines(line.x, line.y, line.width, line.height, BLANK);
         DrawLine(line.x, line.y, line.x + line.width, line.y+line.height, BLACK);
@@ -246,11 +365,13 @@ int main(void)
         DrawRectangleLines(rectangle.x, rectangle.y, rectangle.width, rectangle.height, BLACK);
         DrawRectangleLines(circle.x, circle.y, circle.width, circle.height, BLANK);
         DrawCircleLines(circle.x + circle.width / 2, circle.y + circle.width / 2, circle.width / 2, BLACK);
+        
         // pointer
         DrawLine(screenBorder, screenUIHeight, (screenWidth - screenBorder), screenUIHeight, DARKGRAY);
         DrawCircleV(ballPosition, 4, ballColor);
 
         // custom drawings:
+        
         // lines
         for (int i = 0; i < lines.size(); i++) {
             lines.at(i).draw(lines.at(i).x0, lines.at(i).y0, lines.at(i).x1, lines.at(i).y1);
@@ -259,6 +380,7 @@ int main(void)
                     lines.at(i).selectionHeight, GREEN);
             }
         }
+        // circles
         for (int i = 0; i < circles.size(); i++) {
             circles.at(i).draw(circles.at(i).xm, circles.at(i).ym, circles.at(i).r);
             if (circles.at(i).selected) {
@@ -266,7 +388,22 @@ int main(void)
                     circles.at(i).r * 2, circles.at(i).r * 2, GREEN);
             }
         }
-        //drawCircle(200, 200, 40);
+        // triangles
+        for (int i = 0; i < triangles.size(); i++) {
+            triangles.at(i).draw();
+            if (triangles.at(i).selected) {
+                DrawRectangleLines(triangles.at(i).borderX, triangles.at(i).borderY, triangles.at(i).borderW, 
+                    triangles.at(i).borderH, GREEN);
+            }
+        }
+        // squares
+        for (int i = 0; i < squares.size(); i++) {
+            squares.at(i).draw();
+            if (squares.at(i).selected) {
+                DrawRectangleLines(squares.at(i).x0 - controlsSize/2, squares.at(i).y0 - controlsSize / 2, 
+                    squares.at(i).x3 - squares.at(i).x0 + controlsSize, squares.at(i).y1 - squares.at(i).y0 + controlsSize, GREEN);
+            }
+        }
         EndDrawing();
     }
     CloseWindow();        // Close window and OpenGL context    

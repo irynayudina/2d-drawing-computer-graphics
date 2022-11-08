@@ -9,6 +9,8 @@ public:
 	int ym;
 	int r;
 	Color color;
+	Color fillColor;
+	bool filled = false;
 	char infol[50] = "nothing is selected";
 	int id;
 	char name[50] = "circle";
@@ -19,4 +21,5 @@ public:
 	void draw(int xm, int ym, int r);
 	void unselect(bool s);
 	void run();
+	//void fill(Color c);
 };

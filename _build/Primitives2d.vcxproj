@@ -174,12 +174,16 @@
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="ScreenSizes.h" />
+    <ClInclude Include="Square.h" />
+    <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="ColorControlButton.cpp" />
     <ClCompile Include="Editor.c++" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="Square.cpp" />
+    <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="raylib.vcxproj">

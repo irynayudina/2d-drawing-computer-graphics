@@ -1,4 +1,5 @@
 #include "Circle.h"
+#include <iostream>
 Circle::~Circle() {
 	xm = 300;
 	ym = 300;
@@ -13,14 +14,24 @@ Circle::Circle(int xm, int ym, int r, int id = std::rand(), char name[] = "circl
 	this->r = r;
 	this->id = id;
 	strcpy(this->name, name);
+	color = BLACK;
+}
+void Circle::unselect(bool s) {
+	selected = !s;
 }
 void Circle::draw(int xm, int ym, int r) {
 	int x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */
 	do {
-		DrawPixel(xm - x, ym + y, BLACK); /*   I. Quadrant */
-		DrawPixel(xm - y, ym - x, BLACK); /*  II. Quadrant */
-		DrawPixel(xm + x, ym - y, BLACK); /* III. Quadrant */
-		DrawPixel(xm + y, ym + x, BLACK); /*  IV. Quadrant */
+		DrawPixel(xm - x, ym + y, color); /*   I. Quadrant */
+		DrawPixel(xm - y, ym - x, color); /*  II. Quadrant */
+		DrawPixel(xm + x, ym - y, color); /* III. Quadrant */
+		DrawPixel(xm + y, ym + x, color); /*  IV. Quadrant */
+		if (filled) {
+			DrawLine(xm - x, ym + y, xm, ym, fillColor);
+			DrawLine(xm - y, ym - x, xm, ym, fillColor);
+			DrawLine(xm + x, ym - y, xm, ym, fillColor);
+			DrawLine(xm + y, ym + x, xm, ym, fillColor);
+		}
 		r = err;
 		if (r > x) err += ++x * 2 + 1; /* e_xy+e_x > 0 */
 		if (r <= y) err += ++y * 2 + 1; /* e_xy+e_y < 0 */

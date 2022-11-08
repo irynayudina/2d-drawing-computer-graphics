@@ -5,6 +5,8 @@ Color selectionColor = GREEN;
 int amountOfLines = 0;
 char info[50] = "nothing is selected";
 bool figuresSelected = false;
+bool fill = false;
+Color fillColor = PINK;
 
 
 //bool end = false;

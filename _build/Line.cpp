@@ -30,11 +30,6 @@ void Line :: draw(int x0, int y0, int x1, int y1) {
     int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
     int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
     int err = dx + dy, e2; /* error value e_xy */
-    /*std::string t = "x0: " + std::to_string(x0) + ", y0: " + std::to_string(y0)
-        + "\nx1: " +
-        std::to_string(x1) + ", y1: " + std::to_string(y1);
-    char const* displayCoordinates = t.c_str();*/
-    //printf(displayCoordinates);
     for (;;) {  /* loop */
         DrawPixel(x0, y0, color);
         if (x0 == x1 && y0 == y1) break;
