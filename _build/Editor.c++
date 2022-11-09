@@ -127,7 +127,6 @@ int main(void)
         int min = 20000;
         int minIndex = 0;
         Line* clothestline;
-        figuresSelected = false;
         bool circleSelected = false;
         bool lineSelected = false;
         bool triangleSelected = false;
@@ -184,7 +183,6 @@ int main(void)
             }
             if (triangles.at(i).selected) {
                 ++selectedCount;
-                figuresSelected = true;
                 triangleSelected = true;
                 if (selectedCount == 1) {
                     t = "x0: " + std::to_string(triangles.at(i).borderX) + ", y0: " + std::to_string(triangles.at(i).borderY);
@@ -192,7 +190,7 @@ int main(void)
                 }
                 else {
                     strcpy(info, "multiple squares");
-                }
+                }                
             }
             if (selectedCount <= 1) {
                 if (!lineSelected && !circleSelected && !squareSelected) {
@@ -204,6 +202,11 @@ int main(void)
             }
             else {
                 triangles.at(i).unselect(true);
+            }
+            if (triangles.at(i).selected && IsKeyPressed(KEY_DELETE)) {
+                --selectedCount;
+                triangleSelected = false;
+                triangles.erase(triangles.begin() + i);
             }
         }
         //select and move squares
@@ -220,7 +223,6 @@ int main(void)
             }
             if (squares.at(i).selected) {
                 ++selectedCount;
-                figuresSelected = true;
                 squareSelected = true;
                 if (selectedCount == 1) {
                     t = "x0: " + std::to_string(squares.at(i).x0) + ", y0: " + std::to_string(squares.at(i).y0);
@@ -241,6 +243,11 @@ int main(void)
             else {
                 squares.at(i).unselect(true);
             }
+            if (squares.at(i).selected && IsKeyPressed(KEY_DELETE)) {
+                --selectedCount;
+                squareSelected = false;
+                squares.erase(squares.begin() + i);
+            }
         }
         // select and move circles
         for (int i = 0; i < circles.size(); i++) {
@@ -256,7 +263,6 @@ int main(void)
             }
             if (circles.at(i).selected) {
                 ++selectedCount;
-                figuresSelected = true;
                 circleSelected = true;
                 if (selectedCount == 1) {
                     t = "xm: " + std::to_string(circles.at(i).xm) + ", ym: " + std::to_string(circles.at(i).ym);
@@ -277,6 +283,11 @@ int main(void)
             else {
                 circles.at(i).unselect(true);
             }
+            if (circles.at(i).selected && IsKeyPressed(KEY_DELETE)) {
+                --selectedCount;
+                circleSelected = false;
+                circles.erase(circles.begin() + i);
+            }
         }
         // select and move lines
         for (int i = 0; i < lines.size(); i++) {
@@ -285,7 +296,6 @@ int main(void)
             }
             if (lines.at(i).selected) {
                 ++selectedCount;
-                figuresSelected = true;
                 lineSelected = true;
                 if (selectedCount == 1) {
                     t = "x0: " + std::to_string(lines.at(i).x0) + ", y0: " + std::to_string(lines.at(i).y0)
@@ -302,6 +312,11 @@ int main(void)
             }
             if (lines.at(i).selected && colorize) {
                 lines.at(i).color = selectionColor;
+            }
+            if (lines.at(i).selected && IsKeyPressed(KEY_DELETE)) {
+                --selectedCount;
+                lineSelected = false;
+                lines.erase(lines.begin() + i);
             }
         }
         // detect the closest line to click and unselect other
@@ -335,7 +350,7 @@ int main(void)
 
         // UI elements - library functions
         ClearBackground(RAYWHITE);
-        DrawText("draw item from menue to canvas with a click of a mouse, \nmove and resize it with pressed mouse, \ncolor it by selecting it with a click of a mouse and clicking on color from menue, \nset rotation and scale to selected item(s) from menue, \nto select multiple hold Shift and click with a mouse on each element", screenBorder, screenBorder, controlsSize, DARKGRAY);
+        DrawText("draw item from menue to canvas with a click of a mouse, \nmove it with pressed mouse, \ncolor it by selecting it with a click of a mouse and clicking on color from menue, \nset rotation, translation, sheering and scale to selected item(s) from menue, \nto delete select element and press delete key", screenBorder, screenBorder, controlsSize, DARKGRAY);
         DrawText(displayCoordinates, 850, screenBorder, controlsSize, RED);
         DrawText(info, 850, screenBorder + controlsSize*3, controlsSize, RED);
         
