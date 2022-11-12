@@ -22,6 +22,27 @@ Square::~Square() {
 	this->color = RED;
 	this->id = rand();
 }
+void::Square::scale(float v) {
+	int borderX = x0;
+	int borderY = y0;
+	x0 *= v;
+	x1 *= v;
+	x2 *= v;
+	x3 *= v;
+	y0 *= v;
+	y1 *= v;
+	y2 *= v;
+	y3 *= v;
+
+	x0 -= borderX * (v - 1);
+	y0 -= borderY * (v - 1);
+	x1 -= borderX * (v - 1);
+	y1 -= borderY * (v - 1);
+	x2 -= borderX * (v - 1);
+	y2 -= borderY * (v - 1);
+	x3 -= borderX * (v - 1);
+	y3 -= borderY * (v - 1);
+}
 void Square::draw() {
 	Line l1 = Line(300, 300, 400, 400, rand(), "line", color, 20);
 	Line l2 = Line(300, 300, 400, 400, rand(), "line", color, 20);

@@ -8,6 +8,9 @@ Circle::~Circle() {
 	id = std::rand();
 	strcpy(name, "circle");
 }
+void::Circle::scale(float v) {
+	r *= v;
+}
 Circle::Circle(int xm, int ym, int r, int id = std::rand(), char name[] = "circle") {
 	this->xm = xm;
 	this->ym = ym;

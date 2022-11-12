@@ -28,5 +28,6 @@ public:
 	void detectSelectionClickLine(int x0, int y0, int x1, int y1, int boundaryPixelsOuter);
 	void unselect(bool s);
 	bool onTheScreen();
+	void scale(float v);
 	void run();
 };

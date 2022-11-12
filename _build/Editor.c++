@@ -13,22 +13,6 @@
 #include"Circle.h"
 #include "Triangle.h"
 #include "Square.h"
-// clothest line
-                /*
-                int x;
-                int y;
-                (x0 y0) (x1 y1) // end and start of line
-                (x - x0) / (x1 - x0) = (y - y0) / (y1 - y0)
-                (x - x0) * (y1 - y0) = (y - y0) * (x1 - x0)
-                x * (y1 - y0) - x0 * (y1 - y0)  = y * (x1 - x0) - y0 * (x1 - x0)
-                // equation of line
-                x * (y1 - y0) - y * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0) = 0
-                // distance to line from mouse
-                int xM = GetMouseX();
-                int yM = GetMouseY();
-                A = (y1 - y0)  B = (x1 - x0)*(-1)
-                deltasOfLinesToMouse[i] = abs(xM * (y1 - y0) - yM * (x1 - x0) - x0 * (y1 - y0) + y0 * (x1 - x0))/sqrt(powA,2)+pow(B,2))
-                */
 void changeColor(ColorControlButton colorPressed) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         float xM = GetMouseX();
@@ -75,6 +59,19 @@ void fillWithColor(Rectangle* fillButton, Rectangle* clearButton) {
         } 
     }
 }
+void setScale(Rectangle scaleR) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        float xM = GetMouseX();
+        float yM = GetMouseY();
+        if (CheckCollisionPointRec({ xM, yM }, scaleR)) {
+            scale = true;
+        }
+        else {
+            scale = false;
+        }
+    }
+}
+
 int main(void)
 {
     InitWindow(screenWidth, screenHeight, "2D rpimitives editor");
@@ -106,6 +103,10 @@ int main(void)
     Rectangle rectangle = Rectangle{ colorPalletteX + controlsSize * 4, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     Rectangle circle = Rectangle{ colorPalletteX + controlsSize * 6, screenBorder + controlsSize * 4, controlsSize, controlsSize };
     
+    //transformation buttons
+    Rectangle scaleR = Rectangle{ colorPalletteX + controlsSize * 10, screenBorder, controlsSize*4, controlsSize };
+    Rectangle scaleField = Rectangle{ colorPalletteX + controlsSize * 14, screenBorder, controlsSize * 3, controlsSize };
+
     // pointer decoration 
     Vector2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
@@ -115,6 +116,14 @@ int main(void)
     std::vector<Circle> circles;
     std::vector<Triangle> triangles;
     std::vector<Square> squares;
+
+    // transformation values
+    char scaleV[5] = { 0 };
+    char rotateV[5] = { 0 };
+    char translateY[5] = { 0 };
+    char translateX[5] = { 0 };
+    bool mouseOnScale = false;
+    int letterCount = 0;
 
     SetTargetFPS(60);   
     // Main game loop
@@ -131,6 +140,32 @@ int main(void)
         bool lineSelected = false;
         bool triangleSelected = false;
         bool squareSelected = false;
+
+        if (CheckCollisionPointRec(GetMousePosition(), scaleField)) mouseOnScale = true;
+        else mouseOnScale = false;
+        if (mouseOnScale)
+        {
+            SetMouseCursor(MOUSE_CURSOR_IBEAM);
+            int key = GetCharPressed();
+            while (key > 0)
+            {
+                if ((key >= 32) && (key <= 125) && (letterCount < 4))
+                {
+                    scaleV[letterCount] = (char)key;
+                    scaleV[letterCount + 1] = '\0';
+                    letterCount++;
+                }
+                key = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                letterCount--;
+                if (letterCount < 0) letterCount = 0;
+                scaleV[letterCount] = '\0';
+            }
+        }
+        else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
         strcpy(info, "nothing is selected");
         ballPosition = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) ballColor = MAROON;
@@ -152,12 +187,13 @@ int main(void)
             changeColor(*purple);
         }
         fillWithColor(&fillButton, &clearButton);
+        setScale(scaleR);
         // drawFigures
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             float xM = GetMouseX();
             float yM = GetMouseY();
             if (CheckCollisionPointRec({ xM, yM }, line)) {
-                lines.push_back(Line(300, 300, 400, 400, rand(), "line", RED, 20));
+                lines.push_back(Line(300, 300, 400, 400, rand(), "line", RED, 10));
             }
             if (CheckCollisionPointRec({ xM, yM }, circle)) {
                 circles.push_back(Circle(400, 400, 50, rand(), "circle"));
@@ -180,6 +216,12 @@ int main(void)
             if (triangles.at(i).selected && fill) {
                 triangles.at(i).filled = true;
                 triangles.at(i).fillColor = fillColor;
+            }
+            if (triangles.at(i).selected && scale) {
+                float v = atof(scaleV);
+                triangles.at(i).scale(v);
+                scale = false;
+                triangles.at(i).selected = false;
             }
             if (triangles.at(i).selected) {
                 ++selectedCount;
@@ -221,6 +263,12 @@ int main(void)
                 squares.at(i).filled = true;
                 squares.at(i).fillColor = fillColor;
             }
+            if (squares.at(i).selected && scale) {
+                float v = atof(scaleV);
+                squares.at(i).scale(v);
+                scale = false;
+                squares.at(i).selected = false;
+            }
             if (squares.at(i).selected) {
                 ++selectedCount;
                 squareSelected = true;
@@ -261,6 +309,12 @@ int main(void)
                 circles.at(i).filled = true;
                 circles.at(i).fillColor = fillColor;
             }
+            if (circles.at(i).selected && scale) {
+                float v = atof(scaleV);
+                circles.at(i).scale(v);
+                scale = false;
+                circles.at(i).selected = false;
+            }
             if (circles.at(i).selected) {
                 ++selectedCount;
                 circleSelected = true;
@@ -291,7 +345,7 @@ int main(void)
         }
         // select and move lines
         for (int i = 0; i < lines.size(); i++) {
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) { //  || IsMouseButtonDown(MOUSE_LEFT_BUTTON)
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 lines.at(i).detectSelectionClickLine(lines.at(i).x0, lines.at(i).y0, lines.at(i).x1, lines.at(i).y1, lines.at(i).boundaryPixelsOuter);
             }
             if (lines.at(i).selected) {
@@ -312,6 +366,12 @@ int main(void)
             }
             if (lines.at(i).selected && colorize) {
                 lines.at(i).color = selectionColor;
+            }
+            if (lines.at(i).selected && scale) {
+                float v = atof(scaleV);
+                lines.at(i).scale(v);
+                scale = false;
+                lines.at(i).selected = false;
             }
             if (lines.at(i).selected && IsKeyPressed(KEY_DELETE)) {
                 --selectedCount;
@@ -350,7 +410,7 @@ int main(void)
 
         // UI elements - library functions
         ClearBackground(RAYWHITE);
-        DrawText("draw item from menue to canvas with a click of a mouse, \nmove it with pressed mouse, \ncolor it by selecting it with a click of a mouse and clicking on color from menue, \nset rotation, translation, sheering and scale to selected item(s) from menue, \nto delete select element and press delete key", screenBorder, screenBorder, controlsSize, DARKGRAY);
+        DrawText("draw item from menue to canvas with a click of a mouse, \nmove it with pressed mouse, \ncolor it by selecting it with a click of a mouse and clicking on color from menue, \nset rotation, translation, and scale to selected item(s) from menue, \nto delete select element and press delete key", screenBorder, screenBorder, controlsSize, DARKGRAY);
         DrawText(displayCoordinates, 850, screenBorder, controlsSize, RED);
         DrawText(info, 850, screenBorder + controlsSize*3, controlsSize, RED);
         
@@ -380,7 +440,14 @@ int main(void)
         DrawRectangleLines(rectangle.x, rectangle.y, rectangle.width, rectangle.height, BLACK);
         DrawRectangleLines(circle.x, circle.y, circle.width, circle.height, BLANK);
         DrawCircleLines(circle.x + circle.width / 2, circle.y + circle.width / 2, circle.width / 2, BLACK);
-        
+
+        //transformations
+        //scale
+        DrawRectangleLines(scaleR.x, scaleR.y, scaleR.width, scaleR.height, BLACK);
+        DrawText("Scale", scaleR.x + 3, scaleR.y + 1, controlsSize, BLACK);
+        if (mouseOnScale) DrawRectangleLines(scaleField.x-1, scaleField.y-1, scaleField.width+2, scaleField.height+2, RED);
+        DrawRectangleLines(scaleField.x, scaleField.y, scaleField.width, scaleField.height, BLACK);
+        DrawText(scaleV, scaleField.x, scaleField.y, controlsSize, RED);
         // pointer
         DrawLine(screenBorder, screenUIHeight, (screenWidth - screenBorder), screenUIHeight, DARKGRAY);
         DrawCircleV(ballPosition, 4, ballColor);
@@ -421,6 +488,6 @@ int main(void)
         }
         EndDrawing();
     }
-    CloseWindow();        // Close window and OpenGL context    
+    CloseWindow();   
     return 0;
 }

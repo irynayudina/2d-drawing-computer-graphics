@@ -38,6 +38,17 @@ void Line :: draw(int x0, int y0, int x1, int y1) {
         if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
     }
 }
+void::Line::scale(float v) {
+    x0 *= v;
+    x1 *= v;
+    y0 *= v;
+    y1 *= v;
+
+    x0 -= selectionX * (v - 1);
+    x1 -= selectionX * (v - 1);
+    y0 -= selectionY * (v - 1);
+    y1 -= selectionY * (v - 1);
+}
 void Line :: detectSelectionClickLine(int x0, int y0, int x1, int y1, int boundaryPixelsOuter) {
     int xM = GetMouseX();
     int yM = GetMouseY();

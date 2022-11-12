@@ -7,6 +7,9 @@ char info[50] = "nothing is selected";
 bool figuresSelected = false;
 bool fill = false;
 Color fillColor = PINK;
+bool scale = false;
+bool rotate = false;
+bool translate = false;
 
 
 //bool end = false;

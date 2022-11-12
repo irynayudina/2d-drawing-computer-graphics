@@ -20,6 +20,7 @@ public:
 	void detectSelectionClick();
 	void draw(int xm, int ym, int r);
 	void unselect(bool s);
+	void scale(float v);
 	void run();
 	//void fill(Color c);
 };

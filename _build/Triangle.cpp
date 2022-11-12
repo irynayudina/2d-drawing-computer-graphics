@@ -21,6 +21,21 @@ Triangle::~Triangle() {
 	this->color = RED;
 	this->id = rand();
 }
+void::Triangle::scale(float v) {
+	x0 *= v;
+	x1 *= v;
+	x2 *= v;
+	y0 *= v;
+	y1 *= v;
+	y2 *= v;
+
+	x0 -= borderX * (v-1);
+	x1 -= borderX * (v - 1);
+	x2 -= borderX * (v - 1);
+	y0 -= borderY * (v - 1);
+	y1 -= borderY * (v - 1);
+	y2 -= borderY * (v - 1);
+}
 void Triangle::draw() {
 	Line l1 = Line(300, 300, 400, 400, rand(), "line", color, 20);
 	Line l2 = Line(300, 300, 400, 400, rand(), "line", color, 20);

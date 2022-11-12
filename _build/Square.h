@@ -17,4 +17,6 @@ public:
 	void draw();
 	void unselect(bool s);
 	void run();
+	void scale(float v);
+
 };
