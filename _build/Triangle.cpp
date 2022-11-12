@@ -21,7 +21,7 @@ Triangle::~Triangle() {
 	this->color = RED;
 	this->id = rand();
 }
-void::Triangle::scale(float v) {
+void Triangle::scale(float v) {
 	x0 *= v;
 	x1 *= v;
 	x2 *= v;
@@ -35,6 +35,30 @@ void::Triangle::scale(float v) {
 	y0 -= borderY * (v - 1);
 	y1 -= borderY * (v - 1);
 	y2 -= borderY * (v - 1);
+}
+void Triangle::translate(int x, int y) {
+	x0 += x;
+	x1 += x;
+	x2 += x;
+	y0 += y;
+	y1 += y;
+	y2 += y;
+}
+void Triangle::rotate(int degrees) {
+	// Angle in Radians ? 180°/? = Angle in Degrees
+	double radians = degrees * 3.14159265358979323846 / 180;
+	float s = sin(radians);
+	float c = cos(radians);
+	//int x0t = x0, x1t = x1, x2t = x2;
+	//int y0t = y0, y1t = y1, y2t = y2;
+	int x0t = x0-borderX, x1t = x1 - borderX, x2t = x2 - borderX;
+	int y0t = y0-borderY, y1t = y1-borderY, y2t = y2-borderY;
+	x0 = x0t * c - y0t * s + borderX;
+	y0 = x0t * s + y0t * c + borderY;
+	x1 = x1t * c - y1t * s + borderX;
+	y1 = x1t * s + y1t * c + borderY;
+	x2 = x2t * c - y2t * s + borderX;
+	y2 = x2t * s + y2t * c + borderY;
 }
 void Triangle::draw() {
 	Line l1 = Line(300, 300, 400, 400, rand(), "line", color, 20);

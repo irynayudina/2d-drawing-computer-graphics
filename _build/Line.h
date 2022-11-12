@@ -29,5 +29,7 @@ public:
 	void unselect(bool s);
 	bool onTheScreen();
 	void scale(float v);
+	void translate(int x, int y);
+	void rotate(int degrees);
 	void run();
 };

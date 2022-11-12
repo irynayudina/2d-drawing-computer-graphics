@@ -18,5 +18,6 @@ public:
 	void unselect(bool s);
 	void run();
 	void scale(float v);
-
+	void translate(int x, int y);
+	void rotate(int degrees);
 };

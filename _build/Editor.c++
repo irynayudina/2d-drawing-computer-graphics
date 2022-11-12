@@ -71,6 +71,30 @@ void setScale(Rectangle scaleR) {
         }
     }
 }
+void setRotate(Rectangle rotateR) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        float xM = GetMouseX();
+        float yM = GetMouseY();
+        if (CheckCollisionPointRec({ xM, yM }, rotateR)) {
+            rotate = true;
+        }
+        else {
+            rotate = false;
+        }
+    }
+}
+void setTranslate(Rectangle translateR) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        float xM = GetMouseX();
+        float yM = GetMouseY();
+        if (CheckCollisionPointRec({ xM, yM }, translateR)) {
+            translate = true;
+        }
+        else {
+            translate = false;
+        }
+    }
+}
 
 int main(void)
 {
@@ -106,6 +130,11 @@ int main(void)
     //transformation buttons
     Rectangle scaleR = Rectangle{ colorPalletteX + controlsSize * 10, screenBorder, controlsSize*4, controlsSize };
     Rectangle scaleField = Rectangle{ colorPalletteX + controlsSize * 14, screenBorder, controlsSize * 3, controlsSize };
+    Rectangle roatateR = Rectangle{ colorPalletteX + controlsSize * 10, screenBorder + controlsSize*2, controlsSize * 4, controlsSize };
+    Rectangle rotateField = Rectangle{ colorPalletteX + controlsSize * 14, screenBorder + controlsSize * 2, controlsSize * 3, controlsSize };
+    Rectangle translaeR = Rectangle{ colorPalletteX + controlsSize * 10, screenBorder + controlsSize * 4, controlsSize * 4, controlsSize };
+    Rectangle translateFieldX = Rectangle{ colorPalletteX + controlsSize * 15, screenBorder + controlsSize * 4, controlsSize * 3, controlsSize };
+    Rectangle translateFieldY = Rectangle{ colorPalletteX + controlsSize * 19, screenBorder + controlsSize * 4, controlsSize * 3, controlsSize };
 
     // pointer decoration 
     Vector2 ballPosition = { -100.0f, -100.0f };
@@ -120,10 +149,16 @@ int main(void)
     // transformation values
     char scaleV[5] = { 0 };
     char rotateV[5] = { 0 };
-    char translateY[5] = { 0 };
     char translateX[5] = { 0 };
+    char translateY[5] = { 0 };
     bool mouseOnScale = false;
     int letterCount = 0;
+    bool mouseOnTranslateX = false;
+    int letterCountTX = 0;
+    bool mouseOnTranslateY = false;
+    int letterCountTY = 0;
+    bool mouseOnRotate = false;
+    int letterCountR = 0;
 
     SetTargetFPS(60);   
     // Main game loop
@@ -141,11 +176,11 @@ int main(void)
         bool triangleSelected = false;
         bool squareSelected = false;
 
+        // input scale
         if (CheckCollisionPointRec(GetMousePosition(), scaleField)) mouseOnScale = true;
         else mouseOnScale = false;
         if (mouseOnScale)
         {
-            SetMouseCursor(MOUSE_CURSOR_IBEAM);
             int key = GetCharPressed();
             while (key > 0)
             {
@@ -164,7 +199,76 @@ int main(void)
                 scaleV[letterCount] = '\0';
             }
         }
-        else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+
+        // input translate
+        if (CheckCollisionPointRec(GetMousePosition(), translateFieldX)) mouseOnTranslateX = true;
+        else mouseOnTranslateX = false;
+        if (mouseOnTranslateX)
+        {
+            int key = GetCharPressed();
+            while (key > 0)
+            {
+                if ((key >= 32) && (key <= 125) && (letterCountTX < 4))
+                {
+                    translateX[letterCountTX] = (char)key;
+                    translateX[letterCountTX + 1] = '\0';
+                    letterCountTX++;
+                }
+                key = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                letterCountTX--;
+                if (letterCountTX < 0) letterCountTX = 0;
+                translateX[letterCountTX] = '\0';
+            }
+        }
+        if (CheckCollisionPointRec(GetMousePosition(), translateFieldY)) mouseOnTranslateY = true;
+        else mouseOnTranslateY = false;
+        if (mouseOnTranslateY)
+        {
+            int key = GetCharPressed();
+            while (key > 0)
+            {
+                if ((key >= 32) && (key <= 125) && (letterCountTY < 4))
+                {
+                    translateY[letterCountTY] = (char)key;
+                    translateY[letterCountTY + 1] = '\0';
+                    letterCountTY++;
+                }
+                key = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                letterCountTY--;
+                if (letterCountTY < 0) letterCountTY = 0;
+                translateY[letterCountTY] = '\0';
+            }
+        }
+
+        // input rotate
+        if (CheckCollisionPointRec(GetMousePosition(), rotateField)) mouseOnRotate = true;
+        else mouseOnRotate = false;
+        if (mouseOnRotate)
+        {
+            int key = GetCharPressed();
+            while (key > 0)
+            {
+                if ((key >= 32) && (key <= 125) && (letterCountR < 4))
+                {
+                    rotateV[letterCountR] = (char)key;
+                    rotateV[letterCountR + 1] = '\0';
+                    letterCountR++;
+                }
+                key = GetCharPressed();
+            }
+            if (IsKeyPressed(KEY_BACKSPACE))
+            {
+                letterCountR--;
+                if (letterCountR < 0) letterCountR = 0;
+                rotateV[letterCountR] = '\0';
+            }
+        }
 
         strcpy(info, "nothing is selected");
         ballPosition = GetMousePosition();
@@ -188,6 +292,8 @@ int main(void)
         }
         fillWithColor(&fillButton, &clearButton);
         setScale(scaleR);
+        setRotate(roatateR);
+        setTranslate(translaeR);
         // drawFigures
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             float xM = GetMouseX();
@@ -221,6 +327,19 @@ int main(void)
                 float v = atof(scaleV);
                 triangles.at(i).scale(v);
                 scale = false;
+                triangles.at(i).selected = false;
+            }
+            if (triangles.at(i).selected && rotate) {
+                int v = atoi(rotateV);
+                triangles.at(i).rotate(v);
+                rotate = false;
+                triangles.at(i).selected = false;
+            }
+            if (triangles.at(i).selected && translate) {
+                int vx = atoi(translateX);
+                int vy = atoi(translateY);
+                triangles.at(i).translate(vx, vy);
+                translate = false;
                 triangles.at(i).selected = false;
             }
             if (triangles.at(i).selected) {
@@ -269,6 +388,19 @@ int main(void)
                 scale = false;
                 squares.at(i).selected = false;
             }
+            if (squares.at(i).selected && rotate) {
+                int v = atoi(rotateV);
+                squares.at(i).rotate(v);
+                rotate = false;
+                squares.at(i).selected = false;
+            }
+            if (squares.at(i).selected && translate) {
+                int vx = atoi(translateX);
+                int vy = atoi(translateY);
+                squares.at(i).translate(vx, vy);
+                translate = false;
+                squares.at(i).selected = false;
+            }
             if (squares.at(i).selected) {
                 ++selectedCount;
                 squareSelected = true;
@@ -313,6 +445,19 @@ int main(void)
                 float v = atof(scaleV);
                 circles.at(i).scale(v);
                 scale = false;
+                circles.at(i).selected = false;
+            }
+            if (circles.at(i).selected && rotate) {
+                int v = atoi(rotateV);
+                circles.at(i).rotate(v);
+                rotate = false;
+                circles.at(i).selected = false;
+            }
+            if (circles.at(i).selected && translate) {
+                int vx = atoi(translateX);
+                int vy = atoi(translateY);
+                circles.at(i).translate(vx, vy);
+                translate = false;
                 circles.at(i).selected = false;
             }
             if (circles.at(i).selected) {
@@ -371,6 +516,19 @@ int main(void)
                 float v = atof(scaleV);
                 lines.at(i).scale(v);
                 scale = false;
+                lines.at(i).selected = false;
+            }
+            if (lines.at(i).selected && rotate) {
+                int v = atoi(rotateV);
+                lines.at(i).rotate(v);
+                rotate = false;
+                lines.at(i).selected = false;
+            }
+            if (lines.at(i).selected && translate) {
+                int vx = atoi(translateX);
+                int vy = atoi(translateY);
+                lines.at(i).translate(vx, vy);
+                translate = false;
                 lines.at(i).selected = false;
             }
             if (lines.at(i).selected && IsKeyPressed(KEY_DELETE)) {
@@ -448,6 +606,24 @@ int main(void)
         if (mouseOnScale) DrawRectangleLines(scaleField.x-1, scaleField.y-1, scaleField.width+2, scaleField.height+2, RED);
         DrawRectangleLines(scaleField.x, scaleField.y, scaleField.width, scaleField.height, BLACK);
         DrawText(scaleV, scaleField.x, scaleField.y, controlsSize, RED);
+        //translate
+        DrawRectangleLines(translaeR.x, translaeR.y, translaeR.width, translaeR.height, BLACK);
+        DrawText("Move", translaeR.x + 3, translaeR.y + 1, controlsSize, BLACK);
+        DrawText("x:", translateFieldX.x - controlsSize + 1, translateFieldX.y, controlsSize, BLACK);
+        DrawRectangleLines(translateFieldX.x, translateFieldX.y, translateFieldX.width, translateFieldX.height, BLACK);
+        if (mouseOnTranslateX) DrawRectangleLines(translateFieldX.x - 1, translateFieldX.y - 1, translateFieldX.width + 2, translateFieldX.height + 2, RED);
+        DrawText(translateX, translateFieldX.x, translateFieldX.y, controlsSize, RED);
+        DrawText("y:", translateFieldY.x - controlsSize + 1, translateFieldY.y, controlsSize, BLACK);
+        DrawRectangleLines(translateFieldY.x, translateFieldY.y, translateFieldY.width, translateFieldY.height, BLACK);
+        if (mouseOnTranslateY) DrawRectangleLines(translateFieldY.x - 1, translateFieldY.y - 1, translateFieldY.width + 2, translateFieldY.height + 2, RED);
+        DrawText(translateY, translateFieldY.x, translateFieldY.y, controlsSize, RED);
+        // rotate
+        DrawRectangleLines(roatateR.x, roatateR.y, roatateR.width, roatateR.height, BLACK);
+        DrawText("Rotate", roatateR.x + 3, roatateR.y + 1, controlsSize, BLACK);
+        DrawRectangleLines(rotateField.x, rotateField.y, rotateField.width, rotateField.height, BLACK);
+        if (mouseOnRotate) DrawRectangleLines(rotateField.x - 1, rotateField.y - 1, rotateField.width + 2, rotateField.height + 2, RED);
+        DrawText(rotateV, rotateField.x, rotateField.y, controlsSize, RED);
+
         // pointer
         DrawLine(screenBorder, screenUIHeight, (screenWidth - screenBorder), screenUIHeight, DARKGRAY);
         DrawCircleV(ballPosition, 4, ballColor);

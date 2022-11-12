@@ -22,5 +22,6 @@ public:
 	void unselect(bool s);
 	void scale(float v);
 	void run();
-	//void fill(Color c);
+	void translate(int x, int y);
+	void rotate(int degrees);
 };

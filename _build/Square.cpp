@@ -43,6 +43,28 @@ void::Square::scale(float v) {
 	x3 -= borderX * (v - 1);
 	y3 -= borderY * (v - 1);
 }
+void Square::translate(int x, int y) {
+	x0 += x;
+	x1 += x;
+	x2 += x;
+	x3 += x;
+	y0 += y;
+	y1 += y;
+	y2 += y;
+	y3 += y;
+}
+void Square::rotate(int degrees) {
+	float s = sin(degrees);
+	float c = cos(degrees);
+	x0 = x0 * c - y0 * s;
+	x1 = x1 * c - y1 * s;
+	x2 = x2 * c - y2 * s;
+	x3 = x3 * c - y3 * s;
+	y0 = x0 * s + y0 * c;
+	y1 = x1 * s + y1 * c;
+	y2 = x2 * s + y2 * c;
+	y3 = x3 * s + y3 * c;
+}
 void Square::draw() {
 	Line l1 = Line(300, 300, 400, 400, rand(), "line", color, 20);
 	Line l2 = Line(300, 300, 400, 400, rand(), "line", color, 20);

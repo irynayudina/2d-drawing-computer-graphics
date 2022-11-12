@@ -9,7 +9,17 @@ Circle::~Circle() {
 	strcpy(name, "circle");
 }
 void::Circle::scale(float v) {
-	r *= v;
+	r *= v; 
+}
+void Circle::translate(int x, int y) {
+	xm += x;
+	ym += y;
+}
+void Circle::rotate(int degrees) {
+	float s = sin(degrees);
+	float c = cos(degrees);
+	xm = xm * c - ym * s;
+	ym = xm * s + ym * c;
 }
 Circle::Circle(int xm, int ym, int r, int id = std::rand(), char name[] = "circle") {
 	this->xm = xm;
