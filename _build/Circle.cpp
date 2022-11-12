@@ -16,10 +16,10 @@ void Circle::translate(int x, int y) {
 	ym += y;
 }
 void Circle::rotate(int degrees) {
-	float s = sin(degrees);
+	/*float s = sin(degrees);
 	float c = cos(degrees);
 	xm = xm * c - ym * s;
-	ym = xm * s + ym * c;
+	ym = xm * s + ym * c;*/
 }
 Circle::Circle(int xm, int ym, int r, int id = std::rand(), char name[] = "circle") {
 	this->xm = xm;

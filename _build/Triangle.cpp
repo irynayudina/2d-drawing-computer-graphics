@@ -1,4 +1,4 @@
-#include "Triangle.h"
+﻿#include "Triangle.h"
 #include "Line.h"
 #include <iostream>
 Triangle::Triangle(int x0, int x1, int x2, int y0, int y1, int y2, Color color, int id) {
@@ -45,7 +45,7 @@ void Triangle::translate(int x, int y) {
 	y2 += y;
 }
 void Triangle::rotate(int degrees) {
-	// Angle in Radians ? 180�/? = Angle in Degrees
+	// Angle in Radians × 180°/π = Angle in Degrees
 	double radians = degrees * 3.14159265358979323846 / 180;
 	float s = sin(radians);
 	float c = cos(radians);

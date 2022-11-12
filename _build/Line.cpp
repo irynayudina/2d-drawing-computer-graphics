@@ -56,12 +56,15 @@ void Line::translate(int x, int y) {
     y1 += y;
 }
 void Line::rotate(int degrees) {
-    float s = sin(degrees);
-    float c = cos(degrees);
-    x0 = x0 * c - y0 * s;
-    x1 = x1 * c - y1 * s;
-    y0 = x0 * s + y0 * c;
-    y1 = x1 * s + y1 * c;
+    double radians = degrees * 3.14159265358979323846 / 180;
+    float s = sin(radians);
+    float c = cos(radians);
+    int x0t = x0 - selectionX, x1t = x1 - selectionX;
+    int y0t = y0 - selectionY, y1t = y1 - selectionY;
+    x0 = x0t * c - y0t * s + selectionX;
+    x1 = x1t * c - y1t * s + selectionX;
+    y0 = x0t * s + y0t * c + selectionY;
+    y1 = x1t * s + y1t * c + selectionY;
 }
 void Line :: detectSelectionClickLine(int x0, int y0, int x1, int y1, int boundaryPixelsOuter) {
     int xM = GetMouseX();
