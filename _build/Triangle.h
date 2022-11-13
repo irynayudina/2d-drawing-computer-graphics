@@ -20,5 +20,7 @@ public:
 	void run();
 	void scale(float v);
 	void translate(int x, int y);
+	void detectBorders();
 	void rotate(int degrees);
+	int xmin, xmax, ymin, ymax;
 };

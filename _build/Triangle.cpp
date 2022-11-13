@@ -49,8 +49,6 @@ void Triangle::rotate(int degrees) {
 	double radians = degrees * 3.14159265358979323846 / 180;
 	float s = sin(radians);
 	float c = cos(radians);
-	//int x0t = x0, x1t = x1, x2t = x2;
-	//int y0t = y0, y1t = y1, y2t = y2;
 	int x0t = x0-borderX, x1t = x1 - borderX, x2t = x2 - borderX;
 	int y0t = y0-borderY, y1t = y1-borderY, y2t = y2-borderY;
 	x0 = x0t * c - y0t * s + borderX;
@@ -61,6 +59,7 @@ void Triangle::rotate(int degrees) {
 	y2 = x2t * s + y2t * c + borderY;
 }
 void Triangle::draw() {
+	detectBorders();
 	Line l1 = Line(300, 300, 400, 400, rand(), "line", color, 20);
 	Line l2 = Line(300, 300, 400, 400, rand(), "line", color, 20);
 	Line l3 = Line(300, 300, 400, 400, rand(), "line", color, 20);
@@ -68,11 +67,6 @@ void Triangle::draw() {
 	l2.draw(x1, y1, x2, y2);
 	l3.draw(x2, y2, x0, y0);
 	if (filled) {
-		/*for (int x = x1; x < x2; x++) {
-			for (int y = y0; y > y1; y--) {
-				DrawLine(x0, y0, x, y, fillColor);
-			}
-		}*/
 		for (int xM = borderX; xM < borderX + borderW; xM++) {
 			for (int yM = borderY; yM < borderY + borderH; yM++) {
 				int intersectionsCount = 0;
@@ -138,35 +132,6 @@ void Triangle::detectSelectionClick() {
 		strcpy(infol, "triangle is selected");
 		std::cout << "selected count" << std::endl;
 		std::cout << intersectionsCount << std::endl;
-		int xmin, xmax, ymin, ymax;
-		if (x0 < x1 && x0 < x2) {
-			xmin = x0;
-			x1 < x2 ? xmax = x2 : xmax = x1;
-		}
-		else if (x1 < x0 && x1 < x2) {
-			xmin = x1;
-			x0 < x2 ? xmax = x2 : xmax = x0;
-		}
-		else if (x2 < x0 && x2 < x1) {
-			xmin = x2;
-			x1 < x0 ? xmax = x0 : xmax = x1;
-		}
-		if (y0 < y1 && y0 < y2) {
-			ymin = y0;
-			y1 < y2 ? ymax = y2 : ymax = y1;
-		}
-		else if (y1 < y0 && y1 < y2) {
-			ymin = y1;
-			y0 < y2 ? ymax = y2 : ymax = y0;
-		}
-		else if (y2 < y0 && y2 < y1) {
-			ymin = y2;
-			y1 < y0 ? ymax = y0 : ymax = y1;
-		}
-		borderX = xmin;
-		borderY = ymin;
-		borderH = abs(ymin - ymax),
-		borderW = abs(xmin - xmax);
 	}
 	else {
 		if (yM > screenUIHeight) {
@@ -174,6 +139,62 @@ void Triangle::detectSelectionClick() {
 		}
 		strcpy(infol, "nothing is selected");
 	}
+}
+void Triangle::detectBorders() {
+
+	if (x0 <= x1) {
+		xmin = x0;
+		if (x0 >= x2) {
+			xmin = x2;
+		}
+	}
+	else {
+		xmin = x1;
+		if (x1 >= x2) {
+			xmin = x2;
+		}
+	}
+	if (y0 <= y1) {
+		ymin = y0;
+		if (y0 >= y2) {
+			ymin = y2;
+		}
+	}
+	else {
+		ymin = y1;
+		if (y1 >= y2) {
+			ymin = y2;
+		}
+	}
+
+	if (x0 >= x1) {
+		xmax = x0;
+		if (x0 <= x2) {
+			xmax = x2;
+		}
+	}
+	else {
+		xmax = x1;
+		if (x1 <= x2) {
+			xmax = x2;
+		}
+	}
+	if (y0 >= y1) {
+		ymax = y0;
+		if (y0 <= y2) {
+			ymax = y2;
+		}
+	}
+	else {
+		ymax = y1;
+		if (y1 <= y2) {
+			ymax = y2;
+		}
+	}
+	borderX = xmin;
+	borderY = ymin;
+	borderH = abs(ymin - ymax),
+	borderW = abs(xmin - xmax);
 }
 void Triangle::run() {
 	if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))

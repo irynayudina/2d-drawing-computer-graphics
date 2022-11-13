@@ -9,6 +9,8 @@ public:
 	int id;
 	bool selected = false;
 	char name[50] = "square";
+	int borderX, borderY, borderW, borderH;
+	int xmin, xmax, ymin, ymax;
 	Color fillColor;
 	bool filled = false;
 	Square(int x0, int x1, int x2, int x3, int y0, int y1, int y2, int y3, Color color, int id);
@@ -20,4 +22,5 @@ public:
 	void scale(float v);
 	void translate(int x, int y);
 	void rotate(int degrees);
+	void detectBorders();
 };

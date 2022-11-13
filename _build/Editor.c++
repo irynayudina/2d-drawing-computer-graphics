@@ -658,8 +658,8 @@ int main(void)
         for (int i = 0; i < squares.size(); i++) {
             squares.at(i).draw();
             if (squares.at(i).selected) {
-                DrawRectangleLines(squares.at(i).x0 - controlsSize/2, squares.at(i).y0 - controlsSize / 2, 
-                    squares.at(i).x3 - squares.at(i).x0 + controlsSize, squares.at(i).y1 - squares.at(i).y0 + controlsSize, GREEN);
+                DrawRectangleLines(squares.at(i).borderX - controlsSize/2, squares.at(i).borderY - controlsSize / 2, 
+                    squares.at(i).borderW + controlsSize, squares.at(i).borderH + controlsSize, GREEN);
             }
         }
         EndDrawing();
